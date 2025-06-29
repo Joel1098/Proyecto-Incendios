@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: forestrydb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: forestry123
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: ./Forestry/Forestry
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./Forestry/Forestry:/app
+
+volumes:
+  db_data: 

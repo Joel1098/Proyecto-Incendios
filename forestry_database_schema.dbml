@@ -1,0 +1,105 @@
+// Forestry Database Schema for dbdiagram.io
+// ASP.NET Core API with PostgreSQL
+
+Table Usuarios {
+  idUsuario integer [primary key, increment]
+  Rol varchar(20) [not null]
+  Estado varchar(20) [not null, default: 'Activo']
+  Nombre varchar(50) [not null]
+  ApPaterno varchar(50) [not null]
+  ApMaterno varchar(50) [not null]
+  NumeTel varchar(20)
+  Usuario varchar(50) [not null, unique]
+  Contrasena varchar(256) [not null]
+  TrabajoInicio time
+  TrabajoFin time
+  FechaCreacion timestamp [not null, default: `now()`]
+  
+  indexes {
+    (Usuario) [unique]
+    (Estado)
+  }
+}
+
+Table Etapas {
+  idEtapa integer [primary key, increment]
+  Nombre varchar(50) [not null]
+  Descripcion text
+  Orden integer [not null]
+  Estado varchar(20) [not null, default: 'Activo']
+  Color varchar(7) [default: '#007bff']
+  Icono varchar(50)
+  FechaCreacion timestamp [not null, default: `now()`]
+  
+  indexes {
+    (Orden)
+  }
+}
+
+Table Incendio {
+  idIncendio integer [primary key, increment]
+  FechaIni timestamp [not null]
+  FechaFin timestamp
+  idEtapa integer [not null]
+  NombreDespacho varchar(100)
+  NombreComando varchar(100)
+  Ubicacion varchar(200)
+  Descripcion text
+  Estado varchar(20) [not null, default: 'Activo']
+  idUsuarioResponsable integer
+  FechaCreacion timestamp [not null, default: `now()`]
+  
+  indexes {
+    (idEtapa)
+    (idUsuarioResponsable)
+    (Estado)
+  }
+}
+
+Table Personal {
+  IdTrabajador integer [primary key, increment]
+  Nombre varchar(50) [not null]
+  ApPaterno varchar(50) [not null]
+  ApMaterno varchar(50) [not null]
+  Turno varchar(20)
+  Especialidad varchar(100)
+  Estado varchar(20) [not null, default: 'Activo']
+  FechaCreada timestamp [not null, default: `now()`]
+  
+  indexes {
+    (Estado)
+  }
+}
+
+Table Reporte {
+  idReporte integer [primary key, increment]
+  idIncendio integer [not null]
+  idUsuario integer [not null]
+  Fecha timestamp [not null]
+  Tipo varchar(50) [not null]
+  Contenido text [not null]
+  Estado varchar(20) [not null, default: 'Activo']
+  FechaCreacion timestamp [not null, default: `now()`]
+  
+  indexes {
+    (idIncendio)
+    (idUsuario)
+    (Fecha)
+  }
+}
+
+Table IncendioPersonal {
+  idIncendio integer [primary key]
+  IdTrabajador integer [primary key]
+  FechaAsignacion timestamp [not null, default: `now()`]
+  RolEnIncendio varchar(100)
+  Estado varchar(20) [not null, default: 'Activo']
+}
+
+// Foreign Key Relationships
+Ref: Incendio.idEtapa > Etapas.idEtapa
+Ref: Incendio.idUsuarioResponsable > Usuarios.idUsuario
+Ref: Reporte.idIncendio > Incendio.idIncendio
+Ref: Reporte.idUsuario > Usuarios.idUsuario
+Ref: IncendioPersonal.idIncendio > Incendio.idIncendio
+Ref: IncendioPersonal.IdTrabajador > Personal.IdTrabajador 
