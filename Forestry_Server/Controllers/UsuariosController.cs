@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Forestry.Models;
+using Forestry.DTOs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ namespace Forestry.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUsuario([FromBody] Usuarios usuario)
+        public async Task<IActionResult> CreateUsuario([FromBody] UsuarioCreateSimpleDTO dto)
         {
             try
             {
@@ -79,15 +80,24 @@ namespace Forestry.Controllers
 
                 // Verificar si el usuario ya existe
                 var existingUsuario = await _context.Usuarios
-                    .FirstOrDefaultAsync(u => u.Usuario == usuario.Usuario);
+                    .FirstOrDefaultAsync(u => u.Usuario == dto.Usuario);
 
                 if (existingUsuario != null)
                 {
                     return BadRequest(new { message = "El nombre de usuario ya existe" });
                 }
 
-                // Encriptar contraseña (implementar método de encriptación)
-                // usuario.Contrasena = Encriptar.EncriptarPassword(usuario.Contrasena);
+                var usuario = new Usuarios
+                {
+                    Usuario = dto.Usuario,
+                    Contrasena = dto.Contrasena,
+                    Nombre = dto.Nombre,
+                    ApPaterno = dto.ApPaterno,
+                    ApMaterno = dto.ApMaterno,
+                    Rol = "Personal",
+                    Estado = "Activo",
+                    FechaCreacion = DateTime.UtcNow
+                };
 
                 _context.Usuarios.Add(usuario);
                 await _context.SaveChangesAsync();
@@ -199,7 +209,7 @@ namespace Forestry.Controllers
         }
 
         [HttpPost("personal")]
-        public async Task<IActionResult> CreatePersonal([FromBody] Personal personal)
+        public async Task<IActionResult> CreatePersonal([FromBody] PersonalCreateSimpleDTO dto)
         {
             try
             {
@@ -208,7 +218,13 @@ namespace Forestry.Controllers
                     return BadRequest(ModelState);
                 }
 
-                personal.FechaCreada = DateTime.UtcNow;
+                var personal = new Personal
+                {
+                    Nombre = dto.Nombre,
+                    ApPaterno = dto.ApPaterno,
+                    ApMaterno = dto.ApMaterno,
+                    FechaCreada = DateTime.UtcNow
+                };
 
                 _context.Personal.Add(personal);
                 await _context.SaveChangesAsync();

@@ -67,4 +67,27 @@ namespace Forestry.DTOs
         [Required]
         public string Contrasena { get; set; }
     }
+
+    public class UsuarioCreateSimpleDTO
+    {
+        [Required]
+        [MaxLength(50)]
+        public string Usuario { get; set; }
+
+        [Required]
+        [MaxLength(256)]
+        public string Contrasena { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string Nombre { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string ApPaterno { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string ApMaterno { get; set; }
+    }
 } 

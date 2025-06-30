@@ -170,8 +170,13 @@ namespace Forestry.Controllers
             }
         }
 
-        [HttpPost("{id}/confirmar")]
-        public async Task<IActionResult> ConfirmarReporte(int id)
+        public class CambiarEstadoReporteDTO
+        {
+            public string Estado { get; set; }
+        }
+
+        [HttpPut("{id}/estado")]
+        public async Task<IActionResult> CambiarEstadoReporte(int id, [FromBody] CambiarEstadoReporteDTO dto)
         {
             try
             {
@@ -181,95 +186,16 @@ namespace Forestry.Controllers
                     return NotFound(new { message = "Reporte no encontrado" });
                 }
 
-                reporte.Estado = "Confirmado";
+                reporte.Estado = dto.Estado;
                 await _context.SaveChangesAsync();
 
-                return Ok(new { message = "Reporte confirmado exitosamente" });
+                return Ok(new { message = $"Reporte actualizado a estado '{dto.Estado}' exitosamente" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error confirmando reporte {Id}", id);
+                _logger.LogError(ex, $"Error cambiando estado del reporte {id}");
                 return StatusCode(500, new { message = "Error interno del servidor" });
             }
-        }
-
-        [HttpPost("{id}/rechazar")]
-        public async Task<IActionResult> RechazarReporte(int id)
-        {
-            try
-            {
-                var reporte = await _context.Reporte.FindAsync(id);
-                if (reporte == null)
-                {
-                    return NotFound(new { message = "Reporte no encontrado" });
-                }
-
-                reporte.Estado = "Rechazado";
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Reporte rechazado exitosamente" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error rechazando reporte {Id}", id);
-                return StatusCode(500, new { message = "Error interno del servidor" });
-            }
-        }
-
-        /*---------CREAR REPORTES---------------------------------------------*/
-        [HttpGet("crear-reporte")]
-        public IActionResult CrearReporte()
-        {
-            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
-
-            return Ok(new { message = "Endpoint para crear reporte disponible" });
-        }
-
-        [HttpPost("crear")]
-        public IActionResult CrearReporte([FromBody] CrearReporteDTO dto)
-        {
-            int idUsuario = dto.IdUsuario;
-            var usuario = _context.Usuarios.FirstOrDefault(u => u.idUsuario == idUsuario);
-
-            if (usuario == null)
-            {
-                return BadRequest(new { message = "Usuario no encontrado" });
-            }
-
-            var nuevoReporte = new Reporte
-            {
-                Lugar = dto.Lugar,
-                Situacion = dto.Situacion,
-                Detalles = dto.Detalles,
-                Fecha = DateTime.UtcNow,
-                Estado = "Reportado",
-                Usuario = usuario
-            };
-
-            _context.Reporte.Add(nuevoReporte);
-            _context.SaveChanges();
-
-            return Ok(new { message = "Reporte creado exitosamente", reporte = nuevoReporte });
-        }
-
-        [HttpPost("reportes")]
-        public IActionResult Reportes([FromBody] Reporte reportes, [FromQuery] int? idUsuario = null)
-        {
-            var reporte = _context.Reporte.FirstOrDefault(r => r.idReporte == reportes.idReporte);
-            if (reporte == null)
-            {
-                return NotFound(new { message = "Reporte no encontrado" });
-            }
-
-            // Actualizar el reporte
-            reporte.Lugar = reportes.Lugar;
-            reporte.Situacion = reportes.Situacion;
-            reporte.Detalles = reportes.Detalles;
-            reporte.Estado = reportes.Estado;
-
-            _context.SaveChanges();
-
-            return Ok(new { message = "Reporte actualizado exitosamente", reporte });
         }
 
         /*---------------CREAR INSTANCIA DE INCENDIO-------------------*/
@@ -410,15 +336,6 @@ namespace Forestry.Controllers
                 despacho = despacho,
                 comando = comando
             });
-        }
-
-        [HttpGet("historico-incendios")]
-        public IActionResult HistoricoIncendios()
-        {
-            var incendios = _context.Incendio.Where(u => u.idEtapa > 10)
-                .OrderByDescending(r => r.FechaFin)
-                .ToList();
-            return Ok(incendios);
         }
 
         [HttpPost("ver-incendio")]

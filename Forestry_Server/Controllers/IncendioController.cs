@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Forestry.Models;
+using Forestry.DTOs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,24 +71,37 @@ namespace Forestry.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateIncendio([FromBody] Incendio incendio)
+        public async Task<ActionResult<IncendioDTO>> CrearIncendio([FromBody] IncendioCreateSimpleDTO dto)
         {
             try
             {
-                if (!ModelState.IsValid)
+                var incendio = new Incendio
                 {
-                    return BadRequest(ModelState);
-                }
+                    Ubicacion = dto.Ubicacion,
+                    Descripcion = dto.Descripcion,
+                    FechaIni = DateTime.UtcNow,
+                    Estado = "Activo"
+                    // Asignar otros campos por defecto si es necesario
+                };
 
                 _context.Incendio.Add(incendio);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetIncendio), new { id = incendio.idIncendio }, incendio);
+                var response = new IncendioDTO
+                {
+                    IdIncendio = incendio.idIncendio,
+                    Ubicacion = incendio.Ubicacion,
+                    Descripcion = incendio.Descripcion,
+                    FechaIni = incendio.FechaIni,
+                    Estado = incendio.Estado
+                    // Otros campos si es necesario
+                };
+
+                return CreatedAtAction(nameof(GetIncendio), new { id = incendio.idIncendio }, response);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creando incendio");
-                return StatusCode(500, new { message = "Error interno del servidor" });
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
             }
         }
 

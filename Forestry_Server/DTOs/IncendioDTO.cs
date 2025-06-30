@@ -79,4 +79,13 @@ namespace Forestry.DTOs
         public int? IdUsuarioResponsable { get; set; }
         public string Ubicacion { get; set; }
     }
+
+    public class IncendioCreateSimpleDTO
+    {
+        [Required]
+        [MaxLength(200)]
+        public string Ubicacion { get; set; }
+
+        public string Descripcion { get; set; }
+    }
 } 
