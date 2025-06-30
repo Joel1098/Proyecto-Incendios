@@ -100,7 +100,7 @@ namespace Forestry.Controllers
                     return BadRequest(ModelState);
                 }
 
-                reporte.Fecha = DateTime.Now;
+                reporte.Fecha = DateTime.UtcNow;
                 reporte.Estado = "Reportado";
 
                 _context.Reporte.Add(reporte);
@@ -241,7 +241,7 @@ namespace Forestry.Controllers
                 Lugar = dto.Lugar,
                 Situacion = dto.Situacion,
                 Detalles = dto.Detalles,
-                Fecha = DateTime.Now,
+                Fecha = DateTime.UtcNow,
                 Estado = "Reportado",
                 Usuario = usuario
             };
@@ -283,7 +283,7 @@ namespace Forestry.Controllers
         public IActionResult CrearNuevaInstancia([FromBody] CrearInstanciaIncendioDTO dto)
         {
             // Obtén la fecha y hora actuales
-            DateTime fechaActual = DateTime.Now;
+            DateTime fechaActual = DateTime.UtcNow;
             DateTime fecha = fechaActual.Date;
             DateTime hora = DateTime.Today.Add(fechaActual.TimeOfDay);
             TimeSpan hora1 = fechaActual.TimeOfDay;
@@ -327,7 +327,7 @@ namespace Forestry.Controllers
                 dto.Actualizacion.Latitud = Math.Round(latitudDecimal, 6);
                 dto.Actualizacion.Longitud = Math.Round(longitudDecimal, 6);
                 dto.Actualizacion.Radio = dto.Radio;
-                dto.Actualizacion.FechaAccion = DateTime.Now;
+                dto.Actualizacion.FechaAccion = DateTime.UtcNow;
                 dto.Actualizacion.Accion = "Crear";
                 dto.Actualizacion.Tipo = "Inicial";
                 dto.Actualizacion.Incendio = incendioCreado;
@@ -387,7 +387,7 @@ namespace Forestry.Controllers
                 .ToList();
 
             DayOfWeek diaActual = DateTime.Today.DayOfWeek;
-            TimeSpan horaActual = DateTime.Now.TimeOfDay;
+            TimeSpan horaActual = DateTime.UtcNow.TimeOfDay;
 
             var despacho = _context.Usuarios
                 .Where(u => u.Rol == "Despacho" && u.Estado == "disponible"

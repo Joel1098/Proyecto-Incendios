@@ -69,7 +69,7 @@ namespace Forestry.Models
         public TimeSpan? TrabajoFin { get; set; }
 
         [Display(Name = "Fecha de Creación")]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
         [MaxLength(100)]
         [Display(Name = "Días Laborales")]

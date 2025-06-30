@@ -15,7 +15,7 @@ namespace Forestry.Models
         public int IdTrabajador { get; set; }
 
         [Display(Name = "Fecha de Asignación")]
-        public DateTime FechaAsignacion { get; set; } = DateTime.Now;
+        public DateTime FechaAsignacion { get; set; } = DateTime.UtcNow;
 
         [MaxLength(100)]
         [Display(Name = "Rol en el Incendio")]

@@ -26,6 +26,7 @@ using System.Security.Policy;
 using System.Globalization;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
+using Forestry.DTOs;
 
 namespace Forestry.Controllers
 {
@@ -50,12 +51,6 @@ namespace Forestry.Controllers
             return Ok(new { message = "Forestry API is running" });
         }
 
-        [HttpGet("privacy")]
-        public IActionResult Privacy()
-        {
-            return Ok(new { message = "Privacy Policy" });
-        }
-
         [HttpGet("login")]
         public IActionResult Login()
         {
@@ -68,15 +63,15 @@ namespace Forestry.Controllers
             try
             {
                 var usuario = await _context.Usuarios
-                    .FirstOrDefaultAsync(u => u.Usuario == request.Username);
+                    .FirstOrDefaultAsync(u => u.Usuario == request.Usuario);
 
                 if (usuario == null)
                 {
                     return Unauthorized(new { message = "Usuario no encontrado" });
                 }
 
-                // Verificar contraseña (asumiendo que está encriptada)
-                if (usuario.Contrasena != request.Password) // En producción usar hash
+                // Verificar contraseña (en producción usar hash seguro)
+                if (usuario.Contrasena != request.Contrasena)
                 {
                     return Unauthorized(new { message = "Contraseña incorrecta" });
                 }
@@ -85,7 +80,7 @@ namespace Forestry.Controllers
                 HttpContext.Session.SetInt32("IdUsuario", usuario.idUsuario);
                 HttpContext.Session.SetString("Rol", usuario.Rol);
 
-                return Ok(new { 
+                return Ok(new {
                     message = "Login exitoso",
                     usuario = new {
                         id = usuario.idUsuario,
@@ -101,15 +96,7 @@ namespace Forestry.Controllers
             }
         }
 
-        [HttpPost("logout")]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return Ok(new { message = "Logout exitoso" });
-        }
-
         [HttpGet("error")]
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return StatusCode(500, new { message = "Error interno del servidor" });
@@ -161,14 +148,57 @@ namespace Forestry.Controllers
             return NoContent();
         }
 
-        /*-----------------AGENTE TELEFÓNICO----------------------*/
-
         /*-----------------OTROS-----------------------*/
+
+        [HttpGet("roles")]
+        public IActionResult GetRoles()
+        {
+            var roles = new[] { "Administrador", "Jefe", "Despacho", "Comando", "Personal" };
+            return Ok(roles);
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            try
+            {
+                // Validar si el usuario ya existe
+                var existe = await _context.Usuarios.AnyAsync(u => u.Usuario == request.Usuario);
+                if (existe)
+                {
+                    return BadRequest(new { message = "El usuario ya existe" });
+                }
+
+                var nuevoUsuario = new Usuarios
+                {
+                    Usuario = request.Usuario,
+                    Contrasena = request.Contrasena, // En producción usar hash seguro
+                    Nombre = request.Nombre,
+                    ApPaterno = request.ApPaterno,
+                    ApMaterno = request.ApMaterno,
+                    Rol = request.Rol,
+                    NumeTel = request.NumeTel,
+                    DiasLaborales = request.DiasLaborales,
+                    Estado = request.Estado,
+                    FechaCreacion = DateTime.UtcNow
+                };
+
+                _context.Usuarios.Add(nuevoUsuario);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Usuario registrado exitosamente", usuario = nuevoUsuario });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en registro");
+                return StatusCode(500, new { message = "Error interno del servidor" });
+            }
+        }
     }
 
     public class LoginRequest
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string Usuario { get; set; }
+        public string Contrasena { get; set; }
     }
 }

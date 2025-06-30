@@ -37,7 +37,7 @@ namespace Forestry.Models
         public string Estado { get; set; } = "Activo";
 
         [Display(Name = "Fecha de Creación")]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
         [MaxLength(200)]
         [Display(Name = "Lugar")]

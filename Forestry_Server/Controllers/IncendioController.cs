@@ -181,7 +181,7 @@ namespace Forestry.Controllers
                 {
                     idIncendio = id,
                     IdTrabajador = idTrabajador,
-                    FechaAsignacion = DateTime.Now,
+                    FechaAsignacion = DateTime.UtcNow,
                     Estado = "Activo"
                 };
                 _context.IncendioPersonal.Add(relacion);

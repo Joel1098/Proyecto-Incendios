@@ -40,7 +40,7 @@ namespace Forestry.Models
         public string Icono { get; set; }
 
         [Display(Name = "Fecha de Creación")]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<Incendio> Incendio { get; set; }
     }

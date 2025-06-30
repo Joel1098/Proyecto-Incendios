@@ -38,7 +38,7 @@ namespace Forestry.Models
         public string Estado { get; set; } = "Activo";
 
         [Display(Name = "Fecha de Creación")]
-        public DateTime FechaCreada { get; set; } = DateTime.Now;
+        public DateTime FechaCreada { get; set; } = DateTime.UtcNow;
 
         // Navigation property - This will be handled through the junction table
         // The actual relationship is many-to-many through IncendioPersonal

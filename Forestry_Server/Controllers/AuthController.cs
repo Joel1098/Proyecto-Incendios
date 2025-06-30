@@ -80,10 +80,8 @@ namespace Forestry.Controllers
                     ApMaterno = usuario.ApMaterno,
                     NumeTel = usuario.NumeTel,
                     Usuario = usuario.Usuario,
-                    Contrasena = usuario.Contrasena, // En producción, no enviar la contraseña
                     TrabajoInicio = usuario.TrabajoInicio,
                     TrabajoFin = usuario.TrabajoFin,
-                    FechaCreacion = usuario.FechaCreacion
                 };
 
                 return Ok(usuarioDto);
@@ -111,17 +109,14 @@ namespace Forestry.Controllers
 
                 var usuario = new Usuarios
                 {
-                    Rol = usuarioDto.Rol,
-                    Estado = "Activo",
+                    Usuario = usuarioDto.Usuario,
+                    Contrasena = usuarioDto.Contrasena, // En producción, hashear la contraseña
                     Nombre = usuarioDto.Nombre,
                     ApPaterno = usuarioDto.ApPaterno,
                     ApMaterno = usuarioDto.ApMaterno,
-                    NumeTel = usuarioDto.NumeTel,
-                    Usuario = usuarioDto.Usuario,
-                    Contrasena = usuarioDto.Contrasena, // En producción, hashear la contraseña
-                    TrabajoInicio = usuarioDto.TrabajoInicio,
-                    TrabajoFin = usuarioDto.TrabajoFin,
-                    FechaCreacion = DateTime.Now
+                    Rol = "Personal", // O el rol por defecto que desees
+                    Estado = "Activo",
+                    FechaCreacion = DateTime.UtcNow
                 };
 
                 _context.Usuarios.Add(usuario);
@@ -130,16 +125,12 @@ namespace Forestry.Controllers
                 var response = new UsuarioDTO
                 {
                     IdUsuario = usuario.idUsuario,
+                    Usuario = usuario.Usuario,
                     Rol = usuario.Rol,
-                    Estado = usuario.Estado,
                     Nombre = usuario.Nombre,
                     ApPaterno = usuario.ApPaterno,
                     ApMaterno = usuario.ApMaterno,
-                    NumeTel = usuario.NumeTel,
-                    Usuario = usuario.Usuario,
-                    Contrasena = usuario.Contrasena,
-                    TrabajoInicio = usuario.TrabajoInicio,
-                    TrabajoFin = usuario.TrabajoFin,
+                    Estado = usuario.Estado,
                     FechaCreacion = usuario.FechaCreacion
                 };
 
@@ -164,26 +155,9 @@ namespace Forestry.Controllers
                     return NotFound(new { message = "Usuario no encontrado" });
                 }
 
-                // Verificar si el nuevo nombre de usuario ya existe (si cambió)
-                if (usuario.Usuario != usuarioDto.Usuario)
-                {
-                    var usuarioExistente = await _context.Usuarios
-                        .FirstOrDefaultAsync(u => u.Usuario == usuarioDto.Usuario);
-
-                    if (usuarioExistente != null)
-                    {
-                        return BadRequest(new { message = "El nombre de usuario ya existe" });
-                    }
-                }
-
-                usuario.Rol = usuarioDto.Rol;
                 usuario.Nombre = usuarioDto.Nombre;
                 usuario.ApPaterno = usuarioDto.ApPaterno;
                 usuario.ApMaterno = usuarioDto.ApMaterno;
-                usuario.NumeTel = usuarioDto.NumeTel;
-                usuario.Usuario = usuarioDto.Usuario;
-                usuario.TrabajoInicio = usuarioDto.TrabajoInicio;
-                usuario.TrabajoFin = usuarioDto.TrabajoFin;
 
                 await _context.SaveChangesAsync();
 

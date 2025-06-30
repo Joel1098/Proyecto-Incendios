@@ -6,33 +6,15 @@ namespace Forestry.DTOs
     public class IncendioDTO
     {
         public int IdIncendio { get; set; }
-        
-        [Required]
-        public DateTime FechaIni { get; set; }
-        
-        public DateTime? FechaFin { get; set; }
-        
-        [Required]
-        public int IdEtapa { get; set; }
-        
-        [MaxLength(100)]
         public string NombreDespacho { get; set; }
-        
-        [MaxLength(100)]
         public string NombreComando { get; set; }
-        
-        [MaxLength(200)]
         public string Ubicacion { get; set; }
-        
         public string Descripcion { get; set; }
-        
-        [Required]
-        [MaxLength(20)]
         public string Estado { get; set; }
-        
         public int? IdUsuarioResponsable { get; set; }
-        
-        public DateTime FechaCreacion { get; set; }
+        public int IdEtapa { get; set; }
+        public System.DateTime FechaIni { get; set; }
+        public System.DateTime? FechaFin { get; set; }
         
         // Navigation properties for API responses
         public string EtapaNombre { get; set; }

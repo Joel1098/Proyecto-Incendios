@@ -208,7 +208,7 @@ namespace Forestry.Controllers
                     return BadRequest(ModelState);
                 }
 
-                personal.FechaCreada = DateTime.Now;
+                personal.FechaCreada = DateTime.UtcNow;
 
                 _context.Personal.Add(personal);
                 await _context.SaveChangesAsync();
