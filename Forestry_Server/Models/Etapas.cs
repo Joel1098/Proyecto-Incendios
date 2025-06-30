@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace Forestry.Models
 {
@@ -41,7 +42,6 @@ namespace Forestry.Models
         [Display(Name = "Fecha de Creación")]
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
-        [InverseProperty(nameof(Incendio.Etapa))]
         public virtual ICollection<Incendio> Incendio { get; set; }
     }
 } 

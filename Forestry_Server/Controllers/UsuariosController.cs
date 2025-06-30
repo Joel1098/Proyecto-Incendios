@@ -6,9 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Forestry.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Forestry.Controllers
@@ -31,8 +29,8 @@ namespace Forestry.Controllers
         {
             try
             {
-                var usuarios = await _context._Usuarios
-                    .Include(u => u.Incendio)
+                var usuarios = await _context.Usuarios
+                    .Include(u => u.IncendiosResponsable)
                     .Include(u => u.Reporte)
                     .ToListAsync();
 
@@ -50,8 +48,8 @@ namespace Forestry.Controllers
         {
             try
             {
-                var usuario = await _context._Usuarios
-                    .Include(u => u.Incendio)
+                var usuario = await _context.Usuarios
+                    .Include(u => u.IncendiosResponsable)
                     .Include(u => u.Reporte)
                     .FirstOrDefaultAsync(u => u.idUsuario == id);
 
@@ -80,7 +78,7 @@ namespace Forestry.Controllers
                 }
 
                 // Verificar si el usuario ya existe
-                var existingUsuario = await _context._Usuarios
+                var existingUsuario = await _context.Usuarios
                     .FirstOrDefaultAsync(u => u.Usuario == usuario.Usuario);
 
                 if (existingUsuario != null)
@@ -91,7 +89,7 @@ namespace Forestry.Controllers
                 // Encriptar contraseña (implementar método de encriptación)
                 // usuario.Contrasena = Encriptar.EncriptarPassword(usuario.Contrasena);
 
-                _context._Usuarios.Add(usuario);
+                _context.Usuarios.Add(usuario);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(GetUsuario), new { id = usuario.idUsuario }, usuario);
@@ -113,7 +111,7 @@ namespace Forestry.Controllers
                     return BadRequest();
                 }
 
-                var existingUsuario = await _context._Usuarios.FindAsync(id);
+                var existingUsuario = await _context.Usuarios.FindAsync(id);
                 if (existingUsuario == null)
                 {
                     return NotFound(new { message = "Usuario no encontrado" });
@@ -145,13 +143,13 @@ namespace Forestry.Controllers
         {
             try
             {
-                var usuario = await _context._Usuarios.FindAsync(id);
+                var usuario = await _context.Usuarios.FindAsync(id);
                 if (usuario == null)
                 {
                     return NotFound(new { message = "Usuario no encontrado" });
                 }
 
-                _context._Usuarios.Remove(usuario);
+                _context.Usuarios.Remove(usuario);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -168,9 +166,7 @@ namespace Forestry.Controllers
         {
             try
             {
-                var personal = await _context.Personal
-                    .Include(p => p.Incendio)
-                    .ToListAsync();
+                var personal = await _context.Personal.ToListAsync();
 
                 return Ok(personal);
             }
@@ -186,9 +182,7 @@ namespace Forestry.Controllers
         {
             try
             {
-                var personal = await _context.Personal
-                    .Include(p => p.Incendio)
-                    .FirstOrDefaultAsync(p => p.IdTrabajador == id);
+                var personal = await _context.Personal.FirstOrDefaultAsync(p => p.IdTrabajador == id);
 
                 if (personal == null)
                 {
@@ -248,7 +242,6 @@ namespace Forestry.Controllers
                 existingPersonal.ApPaterno = personal.ApPaterno;
                 existingPersonal.ApMaterno = personal.ApMaterno;
                 existingPersonal.Turno = personal.Turno;
-                existingPersonal.IdIncendio = personal.IdIncendio;
 
                 await _context.SaveChangesAsync();
 

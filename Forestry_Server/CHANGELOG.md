@@ -1,11 +1,102 @@
 # Forestry - API REST para Gestión de Incendios Forestales
 
+## Guía rápida para levantar el servidor y probar todo el sistema
+
+1. **Levanta la base de datos PostgreSQL con Docker Compose:**
+   ```bash
+   docker-compose up -d
+   ```
+   Esto iniciará el contenedor de PostgreSQL en el puerto 5432.
+
+2. **(Opcional) Verifica que la base de datos está corriendo:**
+   ```bash
+   docker ps
+   ```
+
+3. **Restaura las dependencias del proyecto:**
+   ```bash
+   dotnet restore
+   ```
+
+4. **Compila el proyecto:**
+   ```bash
+   dotnet build
+   ```
+
+5. **Crea la migración inicial (solo si no existe):**
+   ```bash
+   dotnet ef migrations add InitialCreate
+   ```
+
+6. **Aplica la migración para crear las tablas en la base de datos:**
+   ```bash
+   dotnet ef database update
+   ```
+
+7. **Ejecuta el servidor de la API:**
+   ```bash
+   dotnet run
+   ```
+   La API estará disponible en `http://localhost:5000` o el puerto configurado.
+
+8. **(Opcional) Accede a la base de datos para ver las tablas:**
+   ```bash
+   docker exec -it forestry_postgres psql -U postgres -d forestrydb
+   \dt
+   \q
+   ```
+
+---
+
 Este proyecto es una API REST desarrollada en ASP.NET Core para la gestión integral de incendios forestales. Permite el registro, seguimiento y administración de reportes de incendios y personal involucrado en cada incidente. El sistema está diseñado para facilitar la coordinación y documentación de las acciones tomadas durante la atención de emergencias forestales.
 
 > **Nota:** Actualmente, el sistema utiliza **PostgreSQL** como base de datos relacional, está preparado para ejecutarse fácilmente en entornos Docker y Docker Compose, y funciona como una API REST para ser consumida por aplicaciones frontend como Angular.
 
 # CHANGELOG
 
+---
+
+# Instrucciones rápidas para PostgreSQL y migraciones
+
+## Levantar la base de datos PostgreSQL con Docker Compose
+
+1. Desde la raíz del proyecto, ejecuta:
+   ```bash
+   docker-compose up -d
+   ```
+   Esto levantará un contenedor de PostgreSQL en el puerto 5432 con la base de datos `forestrydb`, usuario `postgres` y contraseña `forestry123`.
+
+2. Para verificar que el contenedor está corriendo:
+   ```bash
+   docker ps
+   ```
+
+3. Para acceder a la base de datos desde el contenedor:
+   ```bash
+   docker exec -it forestry_postgres psql -U postgres -d forestrydb
+   ```
+   Una vez dentro del prompt de PostgreSQL (`forestrydb=#`), puedes listar las tablas con:
+   ```sql
+   \dt
+   ```
+   Y salir con:
+   ```sql
+   \q
+   ```
+
+## Migraciones de Entity Framework
+
+1. Para crear una migración inicial (solo si no existe):
+   ```bash
+   dotnet ef migrations add InitialCreate
+   ```
+
+2. Para aplicar la migración y crear las tablas en la base de datos:
+   ```bash
+   dotnet ef database update
+   ```
+
+3. Si necesitas ver las tablas desde la terminal, usa el paso de acceso al contenedor y el comando `\dt`.
 
 ---
 
@@ -65,16 +156,14 @@ Asegúrate de configurar correctamente la cadena de conexión a la base de datos
    ```json
    {
      "ConnectionStrings": {
-       "DefaultConnection": "Host=db;Port=5432;Database=forestrydb;Username=postgres;Password=forestry123;"
+       "DefaultConnection": "Host=localhost;Port=5432;Database=forestrydb;Username=postgres;Password=forestry123;"
      }
    }
    ```
 3. **Crea la base de datos y aplica las migraciones:**
    ```bash
-   dotnet ef database update --project Forestry/Forestry/Forestry.csproj
+   dotnet ef database update
    ```
-
-
 
 ## Ejecución con Docker Compose
 

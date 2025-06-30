@@ -15,23 +15,20 @@ using Forestry.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+using Microsoft.OpenApi.Models;
 
 namespace Forestry
 {
-    public class Startup
+    public class Program
     {
-        public Startup(IConfiguration configuration)
+        public static void Main(string[] args)
         {
-            Configuration = configuration;
-        }
+            var builder = WebApplication.CreateBuilder(args);
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
+            // This method gets called by the runtime. Use this method to add services to the container.
+            // ConfigureServices
             // Configurar CORS para permitir peticiones desde Angular
-            services.AddCors(options =>
+            builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAngularApp",
                     builder =>
@@ -43,7 +40,7 @@ namespace Forestry
                     });
             });
 
-            services.AddAuthentication("CookieAuth").AddCookie("CookieAuth", configuraciones => {
+            builder.Services.AddAuthentication("CookieAuth").AddCookie("CookieAuth", configuraciones => {
 
                 configuraciones.Cookie.Name = "Forestry";
                 configuraciones.ExpireTimeSpan = TimeSpan.FromDays(1);
@@ -51,39 +48,60 @@ namespace Forestry
                 configuraciones.AccessDeniedPath = "/Home/AccesDenied";
             });
 
-            services.ConfigureApplicationCookie(options =>
+            builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.ExpireTimeSpan = TimeSpan.FromDays(10);
             });
 
             // Configurar para API REST
-            services.AddControllers();
+            builder.Services.AddControllers();
 
-            services.AddDbContext<ContextoBaseDeDatos>(opt =>
+            builder.Services.AddDbContext<ContextoBaseDeDatos>(opt =>
             {
                 // Para usar PostgreSQL en Docker, la cadena de conexión debe ser compatible
-                opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
+                opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddHttpContextAccessor();
+            builder.Services.AddHttpContextAccessor();
 
             //-------------------------------
-            services.AddSession(options =>
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
             {
                 options.Cookie.Name = ".YourApp.Session";
-                options.IdleTimeout = TimeSpan.FromMinutes(20); // Puedes ajustar el tiempo de expiración según tus necesidades
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
 
-        }
+            // Configurar Swagger
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "Forestry API", 
+                    Version = "v1",
+                    Description = "API REST para Gestión de Incendios Forestales",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Forestry Team",
+                        Email = "support@forestry.com"
+                    }
+                });
+            });
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
+            var app = builder.Build();
+
+            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            // Configure
+            if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => 
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Forestry API v1");
+                    c.RoutePrefix = string.Empty; // Esto hace que Swagger esté disponible en la raíz
+                });
             }
             else
             {
@@ -105,11 +123,9 @@ namespace Forestry
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.MapControllers();
 
+            app.Run();
         }
     }
 }

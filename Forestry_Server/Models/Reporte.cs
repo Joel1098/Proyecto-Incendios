@@ -39,6 +39,18 @@ namespace Forestry.Models
         [Display(Name = "Fecha de Creación")]
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
+        [MaxLength(200)]
+        [Display(Name = "Lugar")]
+        public string Lugar { get; set; }
+
+        [MaxLength(200)]
+        [Display(Name = "Situacion")]
+        public string Situacion { get; set; }
+
+        [MaxLength(500)]
+        [Display(Name = "Detalles")]
+        public string Detalles { get; set; }
+
         // Navigation properties
         [InverseProperty(nameof(Incendio.Reporte))]
         public virtual Incendio Incendio { get; set; }

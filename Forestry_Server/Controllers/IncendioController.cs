@@ -6,9 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Forestry.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Forestry.Controllers
@@ -32,8 +30,9 @@ namespace Forestry.Controllers
             try
             {
                 var incendios = await _context.Incendio
-                    .Include(i => i.Personal)
-                    .Include(i => i.ReporteNavigation)
+                    .Include(i => i.Etapa)
+                    .Include(i => i.UsuarioResponsable)
+                    .Include(i => i.Reporte)
                     .ToListAsync();
 
                 return Ok(incendios);
@@ -51,8 +50,9 @@ namespace Forestry.Controllers
             try
             {
                 var incendio = await _context.Incendio
-                    .Include(i => i.Personal)
-                    .Include(i => i.ReporteNavigation)
+                    .Include(i => i.Etapa)
+                    .Include(i => i.UsuarioResponsable)
+                    .Include(i => i.Reporte)
                     .FirstOrDefaultAsync(i => i.idIncendio == id);
 
                 if (incendio == null)
@@ -152,10 +152,11 @@ namespace Forestry.Controllers
         {
             try
             {
-                var personal = await _context.Personal
-                    .Where(p => p.IdIncendio == id)
+                var personal = await _context.IncendioPersonal
+                    .Where(ip => ip.idIncendio == id)
+                    .Include(ip => ip.Trabajador)
+                    .Select(ip => ip.Trabajador)
                     .ToListAsync();
-
                 return Ok(personal);
             }
             catch (Exception ex)
@@ -166,23 +167,26 @@ namespace Forestry.Controllers
         }
 
         [HttpPost("{id}/personal")]
-        public async Task<IActionResult> AddPersonalToIncendio(int id, [FromBody] Personal personal)
+        public async Task<IActionResult> AddPersonalToIncendio(int id, [FromBody] int idTrabajador)
         {
             try
             {
                 var incendio = await _context.Incendio.FindAsync(id);
-                if (incendio == null)
+                var trabajador = await _context.Personal.FindAsync(idTrabajador);
+                if (incendio == null || trabajador == null)
                 {
-                    return NotFound(new { message = "Incendio no encontrado" });
+                    return NotFound(new { message = "Incendio o trabajador no encontrado" });
                 }
-
-                personal.IdIncendio = id;
-                personal.FechaCreada = DateTime.Now;
-
-                _context.Personal.Add(personal);
+                var relacion = new IncendioPersonal
+                {
+                    idIncendio = id,
+                    IdTrabajador = idTrabajador,
+                    FechaAsignacion = DateTime.Now,
+                    Estado = "Activo"
+                };
+                _context.IncendioPersonal.Add(relacion);
                 await _context.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(GetPersonalIncendio), new { id }, personal);
+                return Ok(relacion);
             }
             catch (Exception ex)
             {

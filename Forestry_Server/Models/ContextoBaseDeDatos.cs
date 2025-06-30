@@ -17,6 +17,17 @@ namespace Forestry.Models
         public DbSet<Personal> Personal { get; set; }
         public DbSet<Reporte> Reporte { get; set; }
         public DbSet<IncendioPersonal> IncendioPersonal { get; set; }
+        public DbSet<BitacoraMedidaInicial> BitacoraMedidaInicial { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Esta configuración solo se usa para herramientas de diseño (migraciones, etc.)
+                // En producción, se usa la configuración del Program.cs
+                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=forestrydb;Username=postgres;Password=forestry123");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +40,7 @@ namespace Forestry.Models
             modelBuilder.Entity<Personal>().ToTable("Personal");
             modelBuilder.Entity<Reporte>().ToTable("Reporte");
             modelBuilder.Entity<IncendioPersonal>().ToTable("IncendioPersonal");
+            modelBuilder.Entity<BitacoraMedidaInicial>().ToTable("BitacoraMedidaInicial");
 
             // Configure composite key for IncendioPersonal
             modelBuilder.Entity<IncendioPersonal>()

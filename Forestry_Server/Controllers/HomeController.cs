@@ -8,12 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Forestry.Models;
-//using Forestry.Models.ViewModels;
-//using Forestry.Repositories;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -31,7 +26,6 @@ using System.Security.Policy;
 using System.Globalization;
 using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace Forestry.Controllers
 {
@@ -73,7 +67,7 @@ namespace Forestry.Controllers
         {
             try
             {
-                var usuario = await _context._Usuarios
+                var usuario = await _context.Usuarios
                     .FirstOrDefaultAsync(u => u.Usuario == request.Username);
 
                 if (usuario == null)
@@ -123,80 +117,51 @@ namespace Forestry.Controllers
 
         /*-----------------MÉTODOS DEL JEFE DE DESPACHO--------------------*/
 
-        [HttpGet]
-        public IActionResult RegistroIncendios()
-        {
-            return View("JefeDespacho/RegistroIncendios");
-        }
-
-
         /*---------------------------MÉTODOS DEL PERSONAL DE DESPACHO-----------------------------*/
-        [HttpGet]
-        public IActionResult IndexDespacho()
-        {
-            return View("Despacho/IndexDespacho");
-        }
-
-        /*---------------------------MÉTODOS DEL PERSONAL DE DESPACHO-----------------------------*/
-        [HttpGet]
-        public IActionResult Bitacoras()
-        {
-           // var primerUsuario = _context._Usuarios.FirstOrDefault();
-            // Console.WriteLine($"ID: {primerUsuario.IdUsuario}, Nombre: {primerUsuario.NombreUsuario}");
-            return View("Comandos/Bitacoras");
-        }
-
-        [HttpGet]
+        [HttpGet("bitacora-chequeo-planeacion")]
         public IActionResult BitacoraChequeoPlaneacion()
         {
-            return View("Comandos/BitacoraChequeoPlaneacion");
+            return NoContent();
         }
 
-        [HttpGet]
+        [HttpGet("bitacora-status-situacion")]
         public IActionResult BitacoraStatusSituacion()
         {
-            return View("Comandos/BitacoraStatusSituacion");
+            return NoContent();
         }
 
-        [HttpGet]
+        [HttpGet("bitacora-tamano-incendio")]
         public IActionResult BitacoraTamanoIncendio()
         {
-            return View("Comandos/BitacoraTamanoIncendio");
+            return NoContent();
         }
 
-        [HttpGet]
+        [HttpGet("bitacora-verificacion-ci")]
         public IActionResult BitacoraVerificacionCI()
         {
-            return View("Comandos/BitacoraVerificacionCI");
+            return NoContent();
         }
 
-        [HttpGet]
+        [HttpGet("bitacora-revision-posterior")]
         public IActionResult BitacoraRevisionPosterior()
         {
-            return View("Comandos/BitacoraRevisionPosterior");
+            return NoContent();
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("recursos")]
         public IActionResult Recursos()
         {
-            return View("Comandos/Recursos");
+            return NoContent();
         }
 
-        [HttpGet]
+        [HttpGet("mapa")]
         public IActionResult Mapa()
         {
-            return View("Comandos/Mapa");
+            return NoContent();
         }
 
         /*-----------------AGENTE TELEFÓNICO----------------------*/
-
-
-        [HttpGet]
-        public IActionResult IncendiosActivos()
-        {
-            return View("IncendiosActivos");
-        }
 
         /*-----------------OTROS-----------------------*/
     }

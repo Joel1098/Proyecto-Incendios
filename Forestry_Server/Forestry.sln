@@ -1,25 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.9.34723.18
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Forestry", "Forestry\Forestry.csproj", "{78DE927D-61BB-480B-9174-173D99FDC6EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forestry", "Forestry.csproj", "{9F559319-E6BE-4347-941B-AC53D1C4CE57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{78DE927D-61BB-480B-9174-173D99FDC6EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{78DE927D-61BB-480B-9174-173D99FDC6EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{78DE927D-61BB-480B-9174-173D99FDC6EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{78DE927D-61BB-480B-9174-173D99FDC6EB}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B1EBB393-B0B3-4A6A-8AEA-074D2FA7E95A}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9F559319-E6BE-4347-941B-AC53D1C4CE57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F559319-E6BE-4347-941B-AC53D1C4CE57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F559319-E6BE-4347-941B-AC53D1C4CE57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F559319-E6BE-4347-941B-AC53D1C4CE57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

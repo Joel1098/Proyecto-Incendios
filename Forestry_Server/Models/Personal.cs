@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace Forestry.Models
 {
@@ -41,5 +42,6 @@ namespace Forestry.Models
 
         // Navigation property - This will be handled through the junction table
         // The actual relationship is many-to-many through IncendioPersonal
+        public virtual ICollection<IncendioPersonal> IncendioPersonal { get; set; }
     }
 }

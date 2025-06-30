@@ -9,7 +9,6 @@ namespace Forestry.Models
     {
         public Incendio()
         {
-            Personal = new HashSet<Personal>();
             Reporte = new HashSet<Reporte>();
         }
 
@@ -59,10 +58,7 @@ namespace Forestry.Models
         [InverseProperty(nameof(Usuarios.IncendiosResponsable))]
         public virtual Usuarios UsuarioResponsable { get; set; }
 
-        [InverseProperty(nameof(Personal.Incendio))]
-        public virtual ICollection<Personal> Personal { get; set; }
-
-        [InverseProperty(nameof(Reporte.Incendio))]
+        public virtual ICollection<IncendioPersonal> IncendioPersonal { get; set; }
         public virtual ICollection<Reporte> Reporte { get; set; }
     }
 }

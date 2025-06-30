@@ -71,8 +71,11 @@ namespace Forestry.Models
         [Display(Name = "Fecha de Creación")]
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
+        [MaxLength(100)]
+        [Display(Name = "Días Laborales")]
+        public string DiasLaborales { get; set; }
+
         // Navigation properties
-        [InverseProperty(nameof(Reporte.Usuario))]
         public virtual ICollection<Reporte> Reporte { get; set; }
 
         [InverseProperty(nameof(Incendio.UsuarioResponsable))]
