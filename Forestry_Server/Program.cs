@@ -57,10 +57,37 @@ namespace Forestry
             // Configurar para API REST
             builder.Services.AddControllers();
 
+            // --- INICIO: Lógica para Render DATABASE_URL ---
+            string GetConnectionString(IConfiguration config)
+            {
+                // 1. Intenta obtener la cadena de conexión de variable de entorno (Render/Heroku)
+                var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                if (!string.IsNullOrEmpty(databaseUrl))
+                {
+                    // Ejemplo: postgres://usuario:password@host:puerto/db
+                    var uri = new Uri(databaseUrl);
+                    var userInfo = uri.UserInfo.Split(':');
+                    var builder = new Npgsql.NpgsqlConnectionStringBuilder
+                    {
+                        Host = uri.Host,
+                        Port = uri.Port,
+                        Username = userInfo[0],
+                        Password = userInfo[1],
+                        Database = uri.AbsolutePath.TrimStart('/'),
+                        SslMode = Npgsql.SslMode.Require,
+                        TrustServerCertificate = true
+                    };
+                    return builder.ToString();
+                }
+                // 2. Si no existe DATABASE_URL, usa la cadena de conexión por defecto
+                return config.GetConnectionString("DefaultConnection");
+            }
+            // --- FIN: Lógica para Render DATABASE_URL ---
+
             builder.Services.AddDbContext<ContextoBaseDeDatos>(opt =>
             {
-                // Para usar PostgreSQL en Docker, la cadena de conexión debe ser compatible
-                opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+                var connectionString = GetConnectionString(builder.Configuration);
+                opt.UseNpgsql(connectionString);
             });
 
             builder.Services.AddHttpContextAccessor();
