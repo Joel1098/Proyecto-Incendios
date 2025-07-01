@@ -19,8 +19,8 @@ RUN dotnet build "Forestry.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "Forestry.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Stage 3: Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+# Stage 3: Runtime (usa SDK, no solo runtime)
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS final
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
@@ -35,5 +35,4 @@ ENV ASPNETCORE_ENVIRONMENT=Production
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
-
+ENTRYPOINT ["./entrypoint.sh"] 
