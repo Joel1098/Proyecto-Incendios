@@ -1,0 +1,50 @@
+# Configuración de despliegue para Render
+# Forestry API - Sistema de Gestión de Incendios Forestales
+
+services:
+  # Servicio de la API
+  - type: web
+    name: forestry-api
+    runtime: docker
+    region: oregon
+    plan: starter
+    healthCheckPath: /swagger
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: DB_HOST
+        fromDatabase:
+          name: forestry-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: forestry-postgres
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: forestry-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: forestry-postgres
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: forestry-postgres
+          property: database
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: forestry-postgres
+          property: connectionString
+    buildCommand: docker build -t forestry-api .
+    startCommand: docker run -p $PORT:8080 forestry-api
+
+databases:
+  # Base de datos PostgreSQL
+  - name: forestry-postgres
+    databaseName: forestrydb
+    user: forestry_user
+    plan: starter
+    region: oregon 

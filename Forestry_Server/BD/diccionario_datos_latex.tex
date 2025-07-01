@@ -1,0 +1,180 @@
+% Diccionario de Datos - Sistema Forestry
+% Formato LaTeX para documentación técnica
+
+\newcommand{\crearTablaDiccionario}[1]{%
+  \subsubsection{#1}
+  \begin{longtable}{|p{4cm}|p{2cm}|p{2cm}|p{1.5cm}|p{2.2cm}|p{2.8cm}|}
+    \hline
+    \textbf{Nombre del campo} & \textbf{Descripción} & \textbf{Tipo de dato} & \textbf{Longitud} & \textbf{Restricciones} & \textbf{Relación} \\ \hline
+}
+
+% =====================================================
+% TABLA: Usuarios
+% =====================================================
+\crearTablaDiccionario{Tabla Usuarios}
+    idUsuario & Identificador único del usuario & int & - & PK, Auto & - \\ \hline
+    Rol & Rol del usuario en el sistema & varchar & 20 & NOT NULL & - \\ \hline
+    Estado & Estado del usuario & varchar & 20 & DEFAULT 'Activo' & - \\ \hline
+    Nombre & Nombre del usuario & varchar & 50 & NOT NULL & - \\ \hline
+    ApPaterno & Apellido paterno & varchar & 50 & NOT NULL & - \\ \hline
+    ApMaterno & Apellido materno & varchar & 50 & NOT NULL & - \\ \hline
+    NumeTel & Número de teléfono & varchar & 20 & - & - \\ \hline
+    Usuario & Nombre de usuario para login & varchar & 50 & UNIQUE, NOT NULL & - \\ \hline
+    Contrasena & Contraseña encriptada & varchar & 256 & NOT NULL & - \\ \hline
+    TrabajoInicio & Hora de inicio de trabajo & time & - & - & - \\ \hline
+    TrabajoFin & Hora de fin de trabajo & time & - & - & - \\ \hline
+    FechaCreacion & Fecha de creación del registro & timestamp & - & DEFAULT now() & - \\ \hline
+    DiasLaborales & Días laborales del usuario & varchar & 100 & - & - \\ \hline
+\end{longtable}
+
+% =====================================================
+% TABLA: Etapas
+% =====================================================
+\crearTablaDiccionario{Tabla Etapas}
+    idEtapa & Identificador único de la etapa & int & - & PK, Auto & - \\ \hline
+    Nombre & Nombre de la etapa & varchar & 50 & NOT NULL & - \\ \hline
+    Descripcion & Descripción detallada & text & - & - & - \\ \hline
+    Orden & Orden de la etapa en el workflow & int & - & NOT NULL & - \\ \hline
+    Estado & Estado de la etapa & varchar & 20 & DEFAULT 'Activo' & - \\ \hline
+    Color & Color para representación visual & varchar & 7 & DEFAULT '#007bff' & - \\ \hline
+    Icono & Icono de la etapa & varchar & 50 & - & - \\ \hline
+    FechaCreacion & Fecha de creación & timestamp & - & DEFAULT now() & - \\ \hline
+\end{longtable}
+
+% =====================================================
+% TABLA: Incendio
+% =====================================================
+\crearTablaDiccionario{Tabla Incendio}
+    idIncendio & Identificador único del incendio & int & - & PK, Auto & - \\ \hline
+    FechaIni & Fecha de inicio del incendio & timestamp & - & NOT NULL & - \\ \hline
+    FechaFin & Fecha de finalización & timestamp & - & - & - \\ \hline
+    idEtapa & Referencia a la etapa actual & int & - & NOT NULL & FK > Etapas.idEtapa \\ \hline
+    NombreDespacho & Nombre del despacho responsable & varchar & 100 & - & - \\ \hline
+    NombreComando & Nombre del comando asignado & varchar & 100 & - & - \\ \hline
+    Ubicacion & Ubicación del incendio & varchar & 200 & NOT NULL & - \\ \hline
+    Descripcion & Descripción del incidente & text & - & - & - \\ \hline
+    Estado & Estado del incendio & varchar & 20 & DEFAULT 'Activo' & - \\ \hline
+    idUsuarioResponsable & Usuario responsable & int & - & - & FK > Usuarios.idUsuario \\ \hline
+    FechaCreacion & Fecha de creación del registro & timestamp & - & DEFAULT now() & - \\ \hline
+\end{longtable}
+
+% =====================================================
+% TABLA: Personal
+% =====================================================
+\crearTablaDiccionario{Tabla Personal}
+    IdTrabajador & Identificador único del trabajador & int & - & PK, Auto & - \\ \hline
+    Nombre & Nombre del trabajador & varchar & 50 & NOT NULL & - \\ \hline
+    ApPaterno & Apellido paterno & varchar & 50 & NOT NULL & - \\ \hline
+    ApMaterno & Apellido materno & varchar & 50 & NOT NULL & - \\ \hline
+    Turno & Turno de trabajo & varchar & 20 & - & - \\ \hline
+    Especialidad & Especialidad del trabajador & varchar & 100 & - & - \\ \hline
+    Estado & Estado del trabajador & varchar & 20 & DEFAULT 'Activo' & - \\ \hline
+    FechaCreada & Fecha de creación del registro & timestamp & - & DEFAULT now() & - \\ \hline
+\end{longtable}
+
+% =====================================================
+% TABLA: Reporte
+% =====================================================
+\crearTablaDiccionario{Tabla Reporte}
+    idReporte & Identificador único del reporte & int & - & PK, Auto & - \\ \hline
+    idIncendio & Referencia al incendio & int & - & - & FK > Incendio.idIncendio \\ \hline
+    idUsuario & Usuario que creó el reporte & int & - & - & FK > Usuarios.idUsuario \\ \hline
+    Fecha & Fecha del reporte & timestamp & - & DEFAULT now() & - \\ \hline
+    Tipo & Tipo de reporte & varchar & 50 & NOT NULL & - \\ \hline
+    Contenido & Contenido del reporte & text & - & NOT NULL & - \\ \hline
+    Estado & Estado del reporte & varchar & 20 & DEFAULT 'Activo' & - \\ \hline
+    FechaCreacion & Fecha de creación & timestamp & - & DEFAULT now() & - \\ \hline
+    Lugar & Lugar del reporte & varchar & 200 & - & - \\ \hline
+    Situacion & Situación descrita & varchar & 200 & - & - \\ \hline
+    Detalles & Detalles adicionales & varchar & 500 & - & - \\ \hline
+\end{longtable}
+
+% =====================================================
+% TABLA: IncendioPersonal
+% =====================================================
+\crearTablaDiccionario{Tabla IncendioPersonal}
+    idIncendio & Referencia al incendio & int & - & PK, NOT NULL & FK > Incendio.idIncendio \\ \hline
+    IdTrabajador & Referencia al trabajador & int & - & PK, NOT NULL & FK > Personal.IdTrabajador \\ \hline
+    FechaAsignacion & Fecha de asignación & timestamp & - & DEFAULT now() & - \\ \hline
+    RolEnIncendio & Rol del trabajador en el incendio & varchar & 100 & - & - \\ \hline
+    Estado & Estado de la asignación & varchar & 20 & DEFAULT 'Activo' & - \\ \hline
+\end{longtable}
+
+% =====================================================
+% TABLA: BitacoraMedidaInicial
+% =====================================================
+\crearTablaDiccionario{Tabla BitacoraMedidaInicial}
+    IdBitacora & Identificador único de la bitácora & int & - & PK, Auto & - \\ \hline
+    FechaCreada & Fecha de creación & timestamp & - & NOT NULL & - \\ \hline
+    Pregunta1 & Primera pregunta de evaluación & varchar & - & NOT NULL & - \\ \hline
+    Pregunta2 & Segunda pregunta de evaluación & varchar & - & NOT NULL & - \\ \hline
+    Peligros & Peligros identificados & varchar & - & NOT NULL & - \\ \hline
+    PotencialExpansion & Potencial de expansión & varchar & - & NOT NULL & - \\ \hline
+    CaracterFuego & Características del fuego & varchar & - & NOT NULL & - \\ \hline
+    PendienteFuego & Pendiente del fuego & varchar & - & NOT NULL & - \\ \hline
+    PosicionPendiente & Posición de la pendiente & varchar & - & NOT NULL & - \\ \hline
+    TipoCombustible & Tipo de combustible & varchar & - & NOT NULL & - \\ \hline
+    CombustiblesAdyacentes & Combustibles adyacentes & varchar & - & NOT NULL & - \\ \hline
+    Aspecto & Aspecto del terreno & varchar & - & NOT NULL & - \\ \hline
+    DireccionViento & Dirección del viento & varchar & - & NOT NULL & - \\ \hline
+    IdIncendio & Referencia al incendio & int & - & - & FK > Incendio.idIncendio \\ \hline
+\end{longtable}
+
+% =====================================================
+% RELACIONES ENTRE TABLAS
+% =====================================================
+\subsubsection{Relaciones entre Tablas}
+\begin{longtable}{|p{4cm}|p{3cm}|p{3cm}|p{3cm}|}
+    \hline
+    \textbf{Tabla Origen} & \textbf{Campo Origen} & \textbf{Tabla Destino} & \textbf{Campo Destino} \\ \hline
+    Incendio & idEtapa & Etapas & idEtapa \\ \hline
+    Incendio & idUsuarioResponsable & Usuarios & idUsuario \\ \hline
+    Reporte & idIncendio & Incendio & idIncendio \\ \hline
+    Reporte & idUsuario & Usuarios & idUsuario \\ \hline
+    IncendioPersonal & idIncendio & Incendio & idIncendio \\ \hline
+    IncendioPersonal & IdTrabajador & Personal & IdTrabajador \\ \hline
+    BitacoraMedidaInicial & IdIncendio & Incendio & idIncendio \\ \hline
+\end{longtable}
+
+% =====================================================
+% ÍNDICES DE LA BASE DE DATOS
+% =====================================================
+\subsubsection{Índices de la Base de Datos}
+\begin{longtable}{|p{4cm}|p{3cm}|p{3cm}|p{3cm}|}
+    \hline
+    \textbf{Tabla} & \textbf{Campo} & \textbf{Tipo} & \textbf{Propósito} \\ \hline
+    Usuarios & Usuario & UNIQUE & Autenticación \\ \hline
+    Usuarios & Estado & INDEX & Filtrar usuarios activos \\ \hline
+    Etapas & Orden & INDEX & Ordenar etapas \\ \hline
+    Incendio & idEtapa & INDEX & Filtrar por etapa \\ \hline
+    Incendio & idUsuarioResponsable & INDEX & Filtrar por responsable \\ \hline
+    Incendio & Estado & INDEX & Filtrar por estado \\ \hline
+    Incendio & FechaIni & INDEX & Ordenar por fecha \\ \hline
+    Personal & Estado & INDEX & Filtrar personal activo \\ \hline
+    Reporte & idIncendio & INDEX & Buscar reportes de incendio \\ \hline
+    Reporte & idUsuario & INDEX & Buscar reportes de usuario \\ \hline
+    Reporte & Fecha & INDEX & Ordenar por fecha \\ \hline
+\end{longtable}
+
+% =====================================================
+% VALORES POR DEFECTO
+% =====================================================
+\subsubsection{Valores por Defecto}
+\begin{longtable}{|p{4cm}|p{3cm}|p{3cm}|p{3cm}|}
+    \hline
+    \textbf{Tabla.Campo} & \textbf{Valor por Defecto} & \textbf{Tipo} & \textbf{Descripción} \\ \hline
+    Usuarios.Estado & 'Activo' & varchar(20) & Estado inicial del usuario \\ \hline
+    Usuarios.FechaCreacion & now() & timestamp & Fecha automática \\ \hline
+    Etapas.Estado & 'Activo' & varchar(20) & Estado inicial de la etapa \\ \hline
+    Etapas.Color & '#007bff' & varchar(7) & Color azul por defecto \\ \hline
+    Etapas.FechaCreacion & now() & timestamp & Fecha automática \\ \hline
+    Incendio.Estado & 'Activo' & varchar(20) & Estado inicial del incendio \\ \hline
+    Incendio.FechaCreacion & now() & timestamp & Fecha automática \\ \hline
+    Personal.Estado & 'Activo' & varchar(20) & Estado inicial del personal \\ \hline
+    Personal.FechaCreada & now() & timestamp & Fecha automática \\ \hline
+    Reporte.Estado & 'Activo' & varchar(20) & Estado inicial del reporte \\ \hline
+    Reporte.Fecha & now() & timestamp & Fecha automática \\ \hline
+    Reporte.FechaCreacion & now() & timestamp & Fecha automática \\ \hline
+    IncendioPersonal.Estado & 'Activo' & varchar(20) & Estado inicial de asignación \\ \hline
+    IncendioPersonal.FechaAsignacion & now() & timestamp & Fecha automática \\ \hline
+\end{longtable} 
