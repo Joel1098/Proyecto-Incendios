@@ -43,13 +43,13 @@ services:
       - key: EmailSettings__SmtpPort
         value: "587"
       - key: EmailSettings__SmtpUsername
-        value: "tu-email@gmail.com"
+        value: "joeldgjo98@gmail.com"
       - key: EmailSettings__SmtpPassword
-        value: "tu-contraseña-de-aplicación"
+        value: "hiir jopq uuah fhhs"
       - key: EmailSettings__EnableSsl
         value: "true"
       - key: EmailSettings__FromEmail
-        value: "tu-email@gmail.com"
+        value: "joeldgjo98@gmail.com"
       - key: EmailSettings__FromName
         value: "Forestry System"
       - key: EmailSettings__EnableEmailNotifications
