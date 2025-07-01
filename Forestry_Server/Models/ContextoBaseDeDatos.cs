@@ -59,17 +59,18 @@ namespace Forestry.Models
                 .HasForeignKey(i => i.idUsuarioResponsable)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            // Configure Reporte relationships
             modelBuilder.Entity<Reporte>()
                 .HasOne(r => r.Incendio)
                 .WithMany(i => i.Reporte)
                 .HasForeignKey(r => r.idIncendio)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Reporte>()
                 .HasOne(r => r.Usuario)
                 .WithMany(u => u.Reporte)
                 .HasForeignKey(r => r.idUsuario)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<IncendioPersonal>()
                 .HasOne(ip => ip.Incendio)
@@ -82,6 +83,13 @@ namespace Forestry.Models
                 .WithMany()
                 .HasForeignKey(ip => ip.IdTrabajador)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure BitacoraMedidaInicial relationship
+            modelBuilder.Entity<BitacoraMedidaInicial>()
+                .HasOne(b => b.Incendio)
+                .WithMany()
+                .HasForeignKey(b => b.IdIncendio)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Configure indexes for better performance
             modelBuilder.Entity<Usuarios>()
@@ -111,9 +119,6 @@ namespace Forestry.Models
 
             modelBuilder.Entity<Reporte>()
                 .HasIndex(r => r.idUsuario);
-
-            modelBuilder.Entity<Reporte>()
-                .HasIndex(r => r.Fecha);
 
             // Configure default values
             modelBuilder.Entity<Usuarios>()

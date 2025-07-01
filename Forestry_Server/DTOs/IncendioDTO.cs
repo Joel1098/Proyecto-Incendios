@@ -15,6 +15,7 @@ namespace Forestry.DTOs
         public int IdEtapa { get; set; }
         public System.DateTime FechaIni { get; set; }
         public System.DateTime? FechaFin { get; set; }
+        public DateTime FechaCreacion { get; set; }
         
         // Navigation properties for API responses
         public string EtapaNombre { get; set; }
@@ -38,6 +39,7 @@ namespace Forestry.DTOs
         [MaxLength(100)]
         public string NombreComando { get; set; }
         
+        [Required]
         [MaxLength(200)]
         public string Ubicacion { get; set; }
         

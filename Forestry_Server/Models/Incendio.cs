@@ -34,6 +34,7 @@ namespace Forestry.Models
         [Display(Name = "Nombre del Comando")]
         public string NombreComando { get; set; }
 
+        [Required(ErrorMessage = "Ubicación obligatoria")]
         [MaxLength(200)]
         [Display(Name = "Ubicación")]
         public string Ubicacion { get; set; }

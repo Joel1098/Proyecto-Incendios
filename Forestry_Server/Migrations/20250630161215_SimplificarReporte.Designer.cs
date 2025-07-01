@@ -3,6 +3,7 @@ using System;
 using Forestry.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Forestry.Migrations
 {
     [DbContext(typeof(ContextoBaseDeDatos))]
-    partial class ContextoBaseDeDatosModelSnapshot : ModelSnapshot
+    [Migration("20250630161215_SimplificarReporte")]
+    partial class SimplificarReporte
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,7 +170,6 @@ namespace Forestry.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("Ubicacion")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
@@ -283,31 +285,24 @@ namespace Forestry.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("idReporte"));
 
-                    b.Property<string>("Contenido")
+                    b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Detalles")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("Estado")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("text")
                         .HasDefaultValue("Activo");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Lugar")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                    b.Property<int?>("IncendioidIncendio")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Situacion")
+                    b.Property<string>("Lugar")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
@@ -316,17 +311,14 @@ namespace Forestry.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int?>("idIncendio")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("idUsuario")
+                    b.Property<int?>("UsuarioidUsuario")
                         .HasColumnType("integer");
 
                     b.HasKey("idReporte");
 
-                    b.HasIndex("idIncendio");
+                    b.HasIndex("IncendioidIncendio");
 
-                    b.HasIndex("idUsuario");
+                    b.HasIndex("UsuarioidUsuario");
 
                     b.ToTable("Reporte", (string)null);
                 });
@@ -407,8 +399,7 @@ namespace Forestry.Migrations
                 {
                     b.HasOne("Forestry.Models.Incendio", "Incendio")
                         .WithMany()
-                        .HasForeignKey("IdIncendio")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("IdIncendio");
 
                     b.Navigation("Incendio");
                 });
@@ -462,13 +453,11 @@ namespace Forestry.Migrations
                 {
                     b.HasOne("Forestry.Models.Incendio", "Incendio")
                         .WithMany("Reporte")
-                        .HasForeignKey("idIncendio")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("IncendioidIncendio");
 
                     b.HasOne("Forestry.Models.Usuarios", "Usuario")
                         .WithMany("Reporte")
-                        .HasForeignKey("idUsuario")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("UsuarioidUsuario");
 
                     b.Navigation("Incendio");
 

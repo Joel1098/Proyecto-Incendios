@@ -212,4 +212,139 @@ Asegúrate de configurar correctamente la cadena de conexión a la base de datos
 - `PUT /api/usuarios/personal/{id}` - Actualizar personal
 - `DELETE /api/usuarios/personal/{id}` - Eliminar personal
 
---- 
+---
+
+# Changelog - Sistema Forestry
+
+## [2.0] - 2024-01-15
+
+### ✨ Nuevas Características
+- **Simplificación del modelo de datos**: Reducción de campos innecesarios
+- **Endpoints optimizados**: Mejora en el rendimiento de las APIs
+- **Flujos simplificados**: Procesos más directos y eficientes
+
+### 🔧 Cambios Técnicos
+
+#### Modelo de Incendio Simplificado
+- **Campos eliminados**: Se removieron campos técnicos complejos como coordenadas GPS, condiciones climáticas, costos, etc.
+- **Campos esenciales mantenidos**:
+  - `idIncendio` (PK)
+  - `FechaIni` (requerido)
+  - `FechaFin` (opcional)
+  - `idEtapa` (requerido, FK a Etapas)
+  - `NombreDespacho`
+  - `NombreComando`
+  - `Ubicacion` (requerido)
+  - `Descripcion`
+  - `Estado` (por defecto "Activo")
+  - `idUsuarioResponsable` (opcional, FK a Usuarios)
+  - `FechaCreacion` (automático)
+
+#### DTOs Optimizados
+- **IncendioCreateSimpleDTO**: Solo requiere `Ubicacion` y `Descripcion`
+- **Valores por defecto automáticos**:
+  - `Estado`: "Activo"
+  - `idEtapa`: 1 (etapa inicial)
+  - `NombreDespacho`: "Sin asignar"
+  - `NombreComando`: "Sin asignar"
+  - `FechaIni`: DateTime.UtcNow
+  - `FechaCreacion`: DateTime.UtcNow
+
+#### Endpoints Corregidos
+- **POST → GET**: `/api/reportes/ver-incendio/{id}` ahora usa método GET correcto
+- **Simplificación**: `/api/reportes/incendios` devuelve solo campos esenciales
+- **Optimización**: Respuestas más ligeras y eficientes
+
+### 🗄️ Base de Datos
+
+#### Estructura Simplificada
+- **7 tablas principales** con relaciones coherentes
+- **Índices optimizados** para consultas frecuentes
+- **Vistas útiles** para reportes comunes
+- **Funciones y triggers** para automatización
+
+#### Nuevas Características de BD
+- **Vistas predefinidas**:
+  - `v_incendios_activos`: Incendios con información básica
+  - `v_personal_incendio`: Personal asignado a incendios
+  - `v_reportes_incendio`: Reportes con contexto
+- **Funciones útiles**:
+  - `obtener_estadisticas_incendios()`: Estadísticas generales
+  - `cambiar_etapa_incendio()`: Cambio de etapa
+- **Triggers automáticos**: Actualización de fechas
+- **Roles y permisos**: Seguridad granular
+
+### 📊 Flujos de Trabajo
+
+#### Creación de Incendio Simplificada
+```
+POST /api/incendio
+{
+  "ubicacion": "Ubicación del incendio",
+  "descripcion": "Descripción opcional"
+}
+```
+
+#### Consulta de Incendios Optimizada
+```
+GET /api/reportes/incendios
+→ Solo campos esenciales: id, ubicacion, fechaIni, estado, etapa
+```
+
+#### Ver Incendio Específico
+```
+GET /api/reportes/ver-incendio/1
+→ Información completa pero organizada
+```
+
+### 🎯 Beneficios
+
+#### Rendimiento
+- **Menos campos** = mejor rendimiento
+- **Índices optimizados** = consultas más rápidas
+- **Respuestas ligeras** = menor uso de ancho de banda
+
+#### Mantenibilidad
+- **Código más limpio** = fácil mantenimiento
+- **Relaciones claras** = estructura coherente
+- **Documentación completa** = fácil comprensión
+
+#### Escalabilidad
+- **Estructura normalizada** = fácil expansión
+- **Separación de responsabilidades** = módulos independientes
+- **APIs RESTful** = estándares web
+
+### 🔄 Migración
+
+#### Cambios Automáticos
+- **Migraciones EF Core** aplicadas automáticamente
+- **Datos existentes** preservados
+- **Compatibilidad** con versiones anteriores
+
+#### Scripts de Base de Datos
+- **forestry_database.sql**: Script completo de PostgreSQL
+- **forestry_database_diagram.md**: Diagrama de estructura
+- **Documentación** actualizada
+
+### 📋 Próximas Mejoras
+- [ ] Implementación de autenticación JWT
+- [ ] Logs de auditoría
+- [ ] Notificaciones en tiempo real
+- [ ] Dashboard de estadísticas
+- [ ] API de reportes avanzados
+
+---
+
+## [1.0] - 2024-01-10
+
+### ✨ Características Iniciales
+- Sistema básico de gestión de incendios
+- Autenticación de usuarios
+- CRUD de entidades principales
+- API REST básica
+
+### 🔧 Características Técnicas
+- ASP.NET Core Web API
+- Entity Framework Core
+- PostgreSQL
+- Migraciones automáticas 

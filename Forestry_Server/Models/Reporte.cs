@@ -11,24 +11,21 @@ namespace Forestry.Models
         [Display(Name = "IdReporte")]
         public int idReporte { get; set; }
 
-        [Required(ErrorMessage = "Incendio obligatorio")]
-        [ForeignKey("idIncendio")]
-        public int idIncendio { get; set; }
+        [Display(Name = "Incendio")]
+        public int? idIncendio { get; set; }
 
-        [Required(ErrorMessage = "Usuario obligatorio")]
-        [ForeignKey("idUsuario")]
-        public int idUsuario { get; set; }
+        [Display(Name = "Usuario")]
+        public int? idUsuario { get; set; }
 
-        [Required(ErrorMessage = "Fecha obligatoria")]
         [Display(Name = "Fecha")]
-        public DateTime Fecha { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.UtcNow;
 
-        [Required(ErrorMessage = "Tipo obligatorio")]
+        [Required]
         [MaxLength(50)]
         [Display(Name = "Tipo")]
         public string Tipo { get; set; }
 
-        [Required(ErrorMessage = "Contenido obligatorio")]
+        [Required]
         [Display(Name = "Contenido")]
         public string Contenido { get; set; }
 
@@ -44,7 +41,7 @@ namespace Forestry.Models
         public string Lugar { get; set; }
 
         [MaxLength(200)]
-        [Display(Name = "Situacion")]
+        [Display(Name = "Situación")]
         public string Situacion { get; set; }
 
         [MaxLength(500)]
@@ -52,10 +49,10 @@ namespace Forestry.Models
         public string Detalles { get; set; }
 
         // Navigation properties
-        [InverseProperty(nameof(Incendio.Reporte))]
+        [ForeignKey("idIncendio")]
         public virtual Incendio Incendio { get; set; }
 
-        [InverseProperty(nameof(Usuarios.Reporte))]
+        [ForeignKey("idUsuario")]
         public virtual Usuarios Usuario { get; set; }
     }
 }

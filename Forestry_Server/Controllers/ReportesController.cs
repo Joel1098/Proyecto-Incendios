@@ -54,7 +54,7 @@ namespace Forestry.Controllers
                 var reportes = await _context.Reporte
                     .Include(r => r.Usuario)
                     .Include(r => r.Incendio)
-                    .OrderByDescending(r => r.Fecha)
+                    .OrderByDescending(r => r.FechaCreacion)
                     .ToListAsync();
 
                 return Ok(reportes);
@@ -91,7 +91,7 @@ namespace Forestry.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateReporte([FromBody] Reporte reporte)
+        public async Task<IActionResult> CreateReporte([FromBody] CrearReporteDTO dto)
         {
             try
             {
@@ -100,8 +100,19 @@ namespace Forestry.Controllers
                     return BadRequest(ModelState);
                 }
 
-                reporte.Fecha = DateTime.UtcNow;
-                reporte.Estado = "Reportado";
+                var reporte = new Reporte
+                {
+                    Tipo = dto.Tipo,
+                    Contenido = dto.Contenido,
+                    Lugar = dto.Lugar,
+                    Situacion = dto.Situacion,
+                    Detalles = dto.Detalles,
+                    idIncendio = dto.idIncendio,
+                    idUsuario = dto.idUsuario,
+                    Fecha = DateTime.UtcNow,
+                    FechaCreacion = DateTime.UtcNow,
+                    Estado = "Activo"
+                };
 
                 _context.Reporte.Add(reporte);
                 await _context.SaveChangesAsync();
@@ -116,25 +127,23 @@ namespace Forestry.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateReporte(int id, [FromBody] Reporte reporte)
+        public async Task<IActionResult> UpdateReporte(int id, [FromBody] CrearReporteDTO dto)
         {
             try
             {
-                if (id != reporte.idReporte)
-                {
-                    return BadRequest();
-                }
-
                 var existingReporte = await _context.Reporte.FindAsync(id);
                 if (existingReporte == null)
                 {
                     return NotFound(new { message = "Reporte no encontrado" });
                 }
 
-                existingReporte.Lugar = reporte.Lugar;
-                existingReporte.Situacion = reporte.Situacion;
-                existingReporte.Detalles = reporte.Detalles;
-                existingReporte.Estado = reporte.Estado;
+                existingReporte.Tipo = dto.Tipo;
+                existingReporte.Contenido = dto.Contenido;
+                existingReporte.Lugar = dto.Lugar;
+                existingReporte.Situacion = dto.Situacion;
+                existingReporte.Detalles = dto.Detalles;
+                existingReporte.idIncendio = dto.idIncendio;
+                existingReporte.idUsuario = dto.idUsuario;
 
                 await _context.SaveChangesAsync();
 
@@ -300,70 +309,78 @@ namespace Forestry.Controllers
         }
 
         [HttpGet("incendios")]
-        public IActionResult Incendios(Incendio incendios)
+        public IActionResult Incendios()
         {
-            var enEspera = _context.Incendio.Where(c => c.idEtapa == 1)
+            var enEspera = _context.Incendio
+                .Where(c => c.idEtapa == 1)
                 .OrderByDescending(r => r.FechaIni)
                 .Take(10)
+                .Select(i => new { 
+                    i.idIncendio, 
+                    i.Ubicacion, 
+                    i.FechaIni, 
+                    i.Estado 
+                })
                 .ToList();
 
-            var enAtencion = _context.Incendio.Where(c => c.idEtapa > 1 && c.idEtapa < 11)
+            var enAtencion = _context.Incendio
+                .Where(c => c.idEtapa > 1 && c.idEtapa < 11)
                 .OrderByDescending(r => r.FechaIni)
                 .Take(10)
-                .ToList();
-
-            DayOfWeek diaActual = DateTime.Today.DayOfWeek;
-            TimeSpan horaActual = DateTime.UtcNow.TimeOfDay;
-
-            var despacho = _context.Usuarios
-                .Where(u => u.Rol == "Despacho" && u.Estado == "disponible"
-                            && u.DiasLaborales.Contains(diaActual.ToString())
-                            && u.TrabajoInicio <= horaActual
-                            && horaActual <= u.TrabajoFin)
-                .ToList();
-
-            var comando = _context.Usuarios
-                .Where(u => u.Rol == "Comandos" && u.Estado == "disponible"
-                            && u.DiasLaborales.Contains(diaActual.ToString())
-                            && u.TrabajoInicio <= horaActual
-                            && horaActual <= u.TrabajoFin)
+                .Select(i => new { 
+                    i.idIncendio, 
+                    i.Ubicacion, 
+                    i.FechaIni, 
+                    i.Estado,
+                    i.NombreComando 
+                })
                 .ToList();
 
             return Ok(new { 
-                message = "Endpoint para incendios disponible",
                 incendiosEspera = enEspera,
-                incendiosAtencion = enAtencion,
-                despacho = despacho,
-                comando = comando
+                incendiosAtencion = enAtencion
             });
         }
 
-        [HttpPost("ver-incendio")]
+        [HttpGet("ver-incendio/{idIncendio}")]
         public IActionResult VerIncendio(int idIncendio)
         {
-            var incendio = _context.Incendio.FirstOrDefault(u => u.idIncendio == idIncendio);
+            var incendio = _context.Incendio
+                .Include(i => i.Etapa)
+                .Include(i => i.UsuarioResponsable)
+                .FirstOrDefault(u => u.idIncendio == idIncendio);
+                
             if (incendio == null)
                 return NotFound(new { message = "Incendio no encontrado" });
 
-            var comando = _context.Usuarios.FirstOrDefault(u => u.idUsuario == incendio.idUsuarioResponsable && u.Rol == "Comandos");
-            var comando1 = incendio.NombreComando;
-
-            // Obtener personal relacionado con el incendio
             var trabajadores = _context.IncendioPersonal
                 .Where(ip => ip.idIncendio == idIncendio)
                 .Include(ip => ip.Trabajador)
-                .Select(ip => ip.Trabajador)
-                .ToList();
-
-            // Filtrar trabajadores por el nombre del comando
-            var trabajadoresFiltrados = trabajadores
-                .Where(t => $"{t.Nombre} {t.ApPaterno} {t.ApMaterno}" == comando1)
+                .Select(ip => new { 
+                    ip.Trabajador.IdTrabajador,
+                    ip.Trabajador.Nombre,
+                    ip.Trabajador.ApPaterno,
+                    ip.Trabajador.ApMaterno,
+                    ip.RolEnIncendio,
+                    ip.FechaAsignacion
+                })
                 .ToList();
 
             return Ok(new {
-                incendio,
-                comando,
-                trabajadores = trabajadoresFiltrados
+                incendio = new {
+                    incendio.idIncendio,
+                    incendio.Ubicacion,
+                    incendio.Descripcion,
+                    incendio.Estado,
+                    incendio.FechaIni,
+                    incendio.FechaFin,
+                    incendio.NombreDespacho,
+                    incendio.NombreComando,
+                    etapa = incendio.Etapa?.Nombre,
+                    responsable = incendio.UsuarioResponsable != null ? 
+                        $"{incendio.UsuarioResponsable.Nombre} {incendio.UsuarioResponsable.ApPaterno}" : null
+                },
+                trabajadores = trabajadores
             });
         }
 

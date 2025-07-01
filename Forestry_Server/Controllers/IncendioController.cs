@@ -79,9 +79,12 @@ namespace Forestry.Controllers
                 {
                     Ubicacion = dto.Ubicacion,
                     Descripcion = dto.Descripcion,
+                    Estado = "Activo",
+                    idEtapa = 1, // Etapa inicial por defecto
+                    NombreDespacho = "Sin asignar",
+                    NombreComando = "Sin asignar",
                     FechaIni = DateTime.UtcNow,
-                    Estado = "Activo"
-                    // Asignar otros campos por defecto si es necesario
+                    FechaCreacion = DateTime.UtcNow
                 };
 
                 _context.Incendio.Add(incendio);
@@ -92,9 +95,8 @@ namespace Forestry.Controllers
                     IdIncendio = incendio.idIncendio,
                     Ubicacion = incendio.Ubicacion,
                     Descripcion = incendio.Descripcion,
-                    FechaIni = incendio.FechaIni,
-                    Estado = incendio.Estado
-                    // Otros campos si es necesario
+                    Estado = incendio.Estado,
+                    FechaIni = incendio.FechaIni
                 };
 
                 return CreatedAtAction(nameof(GetIncendio), new { id = incendio.idIncendio }, response);

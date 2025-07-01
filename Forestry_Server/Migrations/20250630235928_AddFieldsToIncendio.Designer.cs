@@ -3,6 +3,7 @@ using System;
 using Forestry.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Forestry.Migrations
 {
     [DbContext(typeof(ContextoBaseDeDatos))]
-    partial class ContextoBaseDeDatosModelSnapshot : ModelSnapshot
+    [Migration("20250630235928_AddFieldsToIncendio")]
+    partial class AddFieldsToIncendio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,8 +143,38 @@ namespace Forestry.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("idIncendio"));
 
+                    b.Property<string>("Altitud")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("CausaIncendio")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("CodigoEmergencia")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("CondicionesClimaticas")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("CoordenadasGPS")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<decimal?>("CostoEstimado")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("Descripcion")
                         .HasColumnType("text");
+
+                    b.Property<string>("DireccionViento")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<decimal?>("DistanciaPoblacion")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Estado")
                         .ValueGeneratedOnAdd()
@@ -158,6 +191,21 @@ namespace Forestry.Migrations
                     b.Property<DateTime>("FechaIni")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("FuentesAgua")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int?>("HumedadRelativa")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("InfraestructuraAfectada")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Moneda")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<string>("NombreComando")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -166,10 +214,58 @@ namespace Forestry.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Ubicacion")
-                        .IsRequired()
+                    b.Property<string>("Observaciones")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("PoblacionRiesgo")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("PorcentajeControl")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PropietarioTerreno")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PuntoAcceso")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("RequiereInvestigacion")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Severidad")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<decimal?>("SuperficieAfectada")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("SuperficieControlada")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("Temperatura")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("TipoIncendio")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("TipoVegetacion")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Ubicacion")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UltimaActualizacion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("VelocidadViento")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("idEtapa")
                         .HasColumnType("integer");
