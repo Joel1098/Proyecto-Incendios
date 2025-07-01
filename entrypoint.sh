@@ -16,4 +16,4 @@ if [ -f "/app/Forestry_Server.dll" ]; then
 fi
 
 # Iniciar la aplicación
-exec dotnet /app/Forestry_Server.dll
+exec dotnet /app/Forestry.dll
