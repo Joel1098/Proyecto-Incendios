@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Forestry.Models;
 using Forestry.DTOs;
+using Forestry.Services;
 using System.Threading.Tasks;
 using System;
 using System.Security.Cryptography;
@@ -14,10 +16,14 @@ namespace Forestry.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ContextoBaseDeDatos _context;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(ContextoBaseDeDatos context)
+        public AuthController(ContextoBaseDeDatos context, IEmailService emailService, ILogger<AuthController> logger)
         {
             _context = context;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         // POST: api/auth/login
@@ -121,6 +127,21 @@ namespace Forestry.Controllers
 
                 _context.Usuarios.Add(usuario);
                 await _context.SaveChangesAsync();
+
+                // Enviar email de bienvenida si se proporciona un email
+                if (!string.IsNullOrEmpty(usuario.NumeTel) && usuario.NumeTel.Contains("@"))
+                {
+                    try
+                    {
+                        await _emailService.SendUserRegistrationAsync(usuario.NumeTel, usuario.Usuario, usuario.Contrasena);
+                        _logger.LogInformation($"Email de bienvenida enviado a {usuario.NumeTel}");
+                    }
+                    catch (Exception emailEx)
+                    {
+                        _logger.LogWarning($"No se pudo enviar email de bienvenida: {emailEx.Message}");
+                        // No fallar el registro si el email falla
+                    }
+                }
 
                 var response = new UsuarioDTO
                 {

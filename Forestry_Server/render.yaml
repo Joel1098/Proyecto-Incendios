@@ -38,6 +38,22 @@ services:
         fromDatabase:
           name: forestry-postgres
           property: connectionString
+      - key: EmailSettings__SmtpServer
+        value: smtp.gmail.com
+      - key: EmailSettings__SmtpPort
+        value: "587"
+      - key: EmailSettings__SmtpUsername
+        value: "tu-email@gmail.com"
+      - key: EmailSettings__SmtpPassword
+        value: "tu-contraseña-de-aplicación"
+      - key: EmailSettings__EnableSsl
+        value: "true"
+      - key: EmailSettings__FromEmail
+        value: "tu-email@gmail.com"
+      - key: EmailSettings__FromName
+        value: "Forestry System"
+      - key: EmailSettings__EnableEmailNotifications
+        value: "true"
     buildCommand: docker build -t forestry-api .
     startCommand: docker run -p $PORT:8080 forestry-api
 

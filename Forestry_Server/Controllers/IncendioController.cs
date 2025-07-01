@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Forestry.Models;
 using Forestry.DTOs;
+using Forestry.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,11 +19,13 @@ namespace Forestry.Controllers
     {
         private readonly ContextoBaseDeDatos _context;
         private readonly ILogger<IncendioController> _logger;
+        private readonly IEmailService _emailService;
 
-        public IncendioController(ContextoBaseDeDatos context, ILogger<IncendioController> logger)
+        public IncendioController(ContextoBaseDeDatos context, ILogger<IncendioController> logger, IEmailService emailService)
         {
             _context = context;
             _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -89,6 +92,18 @@ namespace Forestry.Controllers
 
                 _context.Incendio.Add(incendio);
                 await _context.SaveChangesAsync();
+
+                // Enviar notificación de nuevo incendio
+                try
+                {
+                    await _emailService.SendIncendioNotificationAsync(incendio.idIncendio, "nuevo");
+                    _logger.LogInformation($"Notificación de nuevo incendio enviada para ID: {incendio.idIncendio}");
+                }
+                catch (Exception emailEx)
+                {
+                    _logger.LogWarning($"No se pudo enviar notificación de incendio: {emailEx.Message}");
+                    // No fallar la creación si el email falla
+                }
 
                 var response = new IncendioDTO
                 {

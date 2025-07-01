@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Microsoft.OpenApi.Models;
+using Forestry.Services;
 
 namespace Forestry
 {
@@ -73,6 +74,10 @@ namespace Forestry
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
+            // Configurar Email Service
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             // Configurar Swagger
             builder.Services.AddSwaggerGen(c =>

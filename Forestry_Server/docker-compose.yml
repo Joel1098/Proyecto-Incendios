@@ -36,6 +36,14 @@ services:
       - DB_PASSWORD=forestry123
       - DB_NAME=forestrydb
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=forestrydb;Username=postgres;Password=forestry123;SSL Mode=Prefer;Trust Server Certificate=true
+      - EmailSettings__SmtpServer=smtp.gmail.com
+      - EmailSettings__SmtpPort=587
+      - EmailSettings__SmtpUsername=tu-email@gmail.com
+      - EmailSettings__SmtpPassword=tu-contraseña-de-aplicación
+      - EmailSettings__EnableSsl=true
+      - EmailSettings__FromEmail=tu-email@gmail.com
+      - EmailSettings__FromName=Forestry System
+      - EmailSettings__EnableEmailNotifications=true
     ports:
       - "8080:8080"
     depends_on:
