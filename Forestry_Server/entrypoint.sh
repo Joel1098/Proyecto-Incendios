@@ -10,9 +10,9 @@ if [ -n "$DB_HOST" ]; then
 fi
 
 # Ejecutar migraciones
-if [ -f "/app/Forestry_Server.dll" ]; then
+if [ -f "/app/Forestry.dll" ]; then
   echo "Ejecutando migraciones..."
-  dotnet ef database update --no-build --project /app/Forestry_Server.csproj --startup-project /app/Forestry_Server.csproj
+  dotnet ef database update --no-build --project /app/Forestry.csproj --startup-project /app/Forestry.csproj
 fi
 
 # Iniciar la aplicación
